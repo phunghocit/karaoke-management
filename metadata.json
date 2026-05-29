@@ -1,0 +1,6 @@
+{
+  "name": "Karaoke Management",
+  "description": "Hệ thống quản lý phòng hát karaoke, tiếp viên, hàng hóa và hóa đơn thời gian thực cho quản lý và nhân viên.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

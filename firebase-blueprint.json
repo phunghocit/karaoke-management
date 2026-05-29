@@ -1,0 +1,119 @@
+{
+  "entities": {
+    "Room": {
+      "title": "Room",
+      "description": "A karaoke room and its current active session details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique key for room" },
+        "name": { "type": "string", "description": "Display name of the room" },
+        "type": { "type": "string", "enum": ["standard", "vip"], "description": "Type of karaoke room" },
+        "status": { "type": "string", "enum": ["available", "occupied", "cleaning"], "description": "State" },
+        "hourlyPrice": { "type": "number", "description": "Charge in VND per hour" },
+        "activeSession": {
+          "type": "object",
+          "properties": {
+            "startTime": { "type": "string", "format": "date-time" },
+            "hostesses": { "type": "array" },
+            "items": { "type": "array" }
+          }
+        }
+      },
+      "required": ["id", "name", "type", "status", "hourlyPrice"]
+    },
+    "Hostess": {
+      "title": "Hostess",
+      "description": "Hostess staff with their billing rates",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique hostess ID" },
+        "name": { "type": "string" },
+        "pricePerHour": { "type": "number", "description": "VND fee per hour" },
+        "status": { "type": "string", "enum": ["available", "busy"] },
+        "currentRoomId": { "type": "string" }
+      },
+      "required": ["id", "name", "pricePerHour", "status"]
+    },
+    "Goods": {
+      "title": "Goods",
+      "description": "Stock of goods/items sold at karaoke",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string", "enum": ["drink", "food", "other"] },
+        "price": { "type": "number" },
+        "unit": { "type": "string" }
+      },
+      "required": ["id", "name", "category", "price", "unit"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Checked-out receipt/bill details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "roomId": { "type": "string" },
+        "roomName": { "type": "string" },
+        "roomType": { "type": "string" },
+        "hourlyPrice": { "type": "number" },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" },
+        "durationMinutes": { "type": "number" },
+        "roomCharge": { "type": "number" },
+        "hostessCharge": { "type": "number" },
+        "goodsCharge": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "hostesses": { "type": "array" },
+        "items": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["id", "roomId", "roomName", "startTime", "endTime", "durationMinutes", "roomCharge", "goodsCharge", "totalAmount"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Operation audit records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "user": { "type": "string" },
+        "role": { "type": "string", "enum": ["manager", "staff"] },
+        "action": { "type": "string" },
+        "details": { "type": "string" }
+      },
+      "required": ["id", "timestamp", "user", "role", "action", "details"]
+    }
+  },
+  "firestore": {
+    "rooms": {
+      "schema": "Room",
+      "description": "Rooms configuration and session info"
+    },
+    "hostesses": {
+      "schema": "Hostess",
+      "description": "Hostess staff catalog and statuses"
+    },
+    "goods": {
+      "schema": "Goods",
+      "description": "Consumables menu items"
+    },
+    "orders": {
+      "schema": "Order",
+      "description": "Final bill invoices and checkout transactions"
+    },
+    "activityLogs": {
+      "schema": "ActivityLog",
+      "description": "Audit logging events data"
+    },
+    "settings": {
+      "schema": "ShopSettings",
+      "description": "Shop settings and name details"
+    },
+    "registrations": {
+      "schema": "StoreRegistration",
+      "description": "Shop registrations waiting for approval"
+    }
+  }
+}
