@@ -345,7 +345,7 @@ export default function ManagementView() {
   };
 
   const handleCancelRoom = (roomId: string) => {
-    if (!currentUser || currentUser.role === 'staff') {
+    if (currentUser.role === 'staff') {
       alert('Tài khoản nhân viên không có quyền hủy phòng!');
       return;
     }
@@ -586,7 +586,7 @@ export default function ManagementView() {
                     return (
                       <div className={`grid ${hasReopenButton ? 'grid-cols-2' : 'grid-cols-1'} gap-2 mt-2`} onClick={(e) => e.stopPropagation()}>
                         {hasReopenButton && (
-                          currentUser && currentUser.role === 'manager' ? (
+                          currentUser.role === 'manager' ? (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -608,7 +608,7 @@ export default function ManagementView() {
                           )
                         )}
 
-                        {currentUser && currentUser.role === 'manager' ? (
+                        {currentUser.role === 'manager' ? (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -647,40 +647,40 @@ export default function ManagementView() {
         mobileSubTab === 'rooms' ? 'flex' : 'hidden md:flex'
       }`}>
         {/* Room selection area */}
-        <div className={`p-4 border-b border-slate-800 bg-indigo-950/5/30 flex flex-col md:flex-row md:items-center justify-between space-y-3 md:space-y-0 shrink-0 ${
+        <div className={`p-3 sm:p-4 border-b border-slate-800 bg-indigo-950/5/30 flex flex-col space-y-3 sm:space-y-0 shrink-0 ${
           selectedRoom ? 'hidden lg:flex' : 'flex'
         }`}>
           <div>
-            <h2 className="text-base font-bold text-slate-100 flex items-center space-x-2">
+            <h2 className="text-sm sm:text-base font-bold text-slate-100 flex items-center space-x-2">
               <span className="w-1.5 h-3 bg-indigo-500 rounded-xs"></span>
-              <span>Sơ đồ phòng Karaoke thời gian thực</span>
+              <span className="truncate">Sơ đồ phòng Karaoke thời gian thực</span>
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">Thời gian thực đồng bộ | Nhấp vào phòng để thêm món ăn, tiếp viên và chốt bill</p>
           </div>
 
           {/* Setup Button & KPI Pills */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 justify-between sm:justify-start">
             <button
               onClick={() => setIsRoomCRUDOpen(true)}
-              className="flex items-center space-x-1 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer"
+              className="flex items-center space-x-1 px-2 sm:px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer shrink-0"
               id="btn-room-config"
             >
               <Settings size={13.5} className="animate-spin-slow" />
-              <span>Thiết lập Phòng ({rooms.length})</span>
+              <span className="truncate">Thiết lập ({rooms.length})</span>
             </button>
 
-            <div className="flex items-center space-x-2 text-[11px] font-mono">
-              <div className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1 flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <div className="flex items-center space-x-1 sm:space-x-2 text-[10px] sm:text-[11px] font-mono overflow-x-auto">
+              <div className="bg-slate-900 border border-slate-800 rounded-lg px-2 sm:px-2.5 py-1 flex items-center space-x-1 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                 <span className="text-slate-400">Trống ({availableCount})</span>
               </div>
-              <div className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1 flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                <span className="text-slate-400">Đang hát ({occupiedCount})</span>
+              <div className="bg-slate-900 border border-slate-800 rounded-lg px-2 sm:px-2.5 py-1 flex items-center space-x-1 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                <span className="text-slate-400">Hát ({occupiedCount})</span>
               </div>
-              <div className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1 flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                <span className="text-slate-400">Dọn dẹp ({cleaningCount})</span>
+              <div className="bg-slate-900 border border-slate-800 rounded-lg px-2 sm:px-2.5 py-1 flex items-center space-x-1 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span className="text-slate-400">Dọn ({cleaningCount})</span>
               </div>
             </div>
           </div>
@@ -690,8 +690,8 @@ export default function ManagementView() {
         <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
           
           {/* Main map Grid */}
-          <div className={`flex-1 overflow-y-auto p-4 lg:p-6 ${selectedRoom ? 'hidden lg:block' : 'block'}`}>
-            <div className="grid grid-cols-2 gap-5">
+          <div className={`flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 ${selectedRoom ? 'hidden lg:block' : 'block'}`}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
               {rooms.map(room => {
                 const isSelected = selectedRoomId === room.id;
                 let bgStyle = 'bg-slate-900/60 border-slate-800/80 hover:border-slate-700';
@@ -790,7 +790,7 @@ export default function ManagementView() {
           </div>
 
           {/* Main selected Room Manager sidebar controller */}
-          <div className={`w-full lg:w-[480px] xl:w-[540px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/35 overflow-y-auto max-h-[calc(100vh-240px)] lg:max-h-full flex flex-col ${
+          <div className={`w-full lg:w-[480px] xl:w-[540px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/35 overflow-y-auto h-full lg:max-h-full flex flex-col ${
             selectedRoom ? 'flex' : 'hidden lg:flex'
           }`}>
             {selectedRoom ? (
@@ -897,7 +897,7 @@ export default function ManagementView() {
                       </div>
 
                       {/* Unified Time Controllers (Giờ Vào & Giờ Ra cùng 1 chỗ, hỗ trợ cả Ngày & Giờ) */}
-                      <div className="pt-3 border-t border-slate-900/60 grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                      <div className="pt-3 border-t border-slate-900/60 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         {/* Cột 1: Sửa giờ vào */}
                         <div className="space-y-1.5 border border-slate-800/30 p-2.5 rounded-xl bg-slate-950/10">
                           <span className="block text-slate-400 text-[10.5px] font-semibold uppercase tracking-wider mb-1">1. Giờ vào phòng</span>
@@ -1159,7 +1159,7 @@ export default function ManagementView() {
                                 {/* Row 3 (Collapsible Adjusters): Time pickers adjusters */}
                                 {editingHostessTimeId === h.id && (
                                   <div className="pt-2 border-t border-slate-900/60 space-y-2 pb-1">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                       {/* Sửa giờ vào tiếp viên */}
                                       <div className="space-y-1.5 bg-slate-950/40 p-2 rounded-lg border border-slate-900/40">
                                         <span className="block text-slate-400 text-[9.5px] font-bold uppercase tracking-wider mb-1">Giờ vào tiếp viên:</span>
@@ -1262,12 +1262,12 @@ export default function ManagementView() {
 
                       {/* Interactive Add list with search category toggle */}
                       <div className="bg-slate-950/45 border border-slate-800 p-3.5 rounded-2xl flex flex-col space-y-2.5">
-                        <div className="flex gap-1 pb-1 overflow-x-auto">
+                        <div className="flex space-x-1 pb-1">
                           {(['all', 'drink', 'food', 'other'] as const).map(cat => (
                             <button
                               key={cat}
                               onClick={() => setGoodsCategoryFilter(cat)}
-                              className={`text-[10.5px] px-2 py-1 rounded-md font-medium transition cursor-pointer shrink-0 whitespace-nowrap ${
+                              className={`text-[10.5px] px-2 py-1 rounded-md font-medium transition cursor-pointer ${
                                 goodsCategoryFilter === cat 
                                   ? 'bg-indigo-600 font-bold text-white' 
                                   : 'bg-slate-900 border border-slate-800 text-slate-500 hover:text-slate-300'
@@ -1471,7 +1471,7 @@ export default function ManagementView() {
                           </button>
 
                           {/* Cancellation Button */}
-                          {currentUser && currentUser.role === 'manager' ? (
+                          {currentUser.role === 'manager' ? (
                             <button
                               onClick={() => setIsCancellingRoom(true)}
                               className="w-full flex items-center justify-center space-x-1.5 bg-slate-900/60 hover:bg-rose-950/20 text-rose-400 hover:text-rose-300 border border-rose-500/20 hover:border-rose-500/40 py-2 rounded-xl transition cursor-pointer font-bold text-xs"
