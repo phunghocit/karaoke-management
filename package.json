@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "deploy": "npm run build && git add dist -f && git commit -m \"Deploy to GitHub Pages\" && git push"
+    "deploy": "npm run build && git add dist -f && git commit -m 'Deploy to GitHub Pages' && git push"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
