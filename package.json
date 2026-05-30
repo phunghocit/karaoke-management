@@ -1,6 +1,6 @@
 {
-  "name": "la-quan-ly-karaoke",
-  "description": "Hệ Thống Quản Lý Karaoke",
+  "name": "quan-ly-karaoke",
+  "description": "Quản Lý Karaoke",
   "private": true,
   "version": "1.0.0",
   "type": "module",
