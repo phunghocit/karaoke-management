@@ -4,8 +4,11 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  // Use '/karaoke-management/' for GitHub Pages, '/' for Vercel
+  const base = process.env.VITE_DEPLOY_TARGET === 'github-pages' ? '/karaoke-management/' : '/';
+  
   return {
-    base: '/karaoke-management/',
+    base,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
