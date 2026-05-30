@@ -108,10 +108,6 @@ export default function ManagementView() {
   const [invoiceSortBy, setInvoiceSortBy] = useState<'id' | 'startTime' | 'endTime'>('endTime');
   const [invoiceSortOrder, setInvoiceSortOrder] = useState<'asc' | 'desc'>('desc');
 
-  // Mobile room detail overlay state
-  const [showMobileRoomDetail, setShowMobileRoomDetail] = useState(false);
-  const [mobileDetailStartY, setMobileDetailStartY] = useState(0);
-
   // Custom persistent confirmation modal state
   const [confirmState, setConfirmState] = useState<{
     title: string;
@@ -419,9 +415,12 @@ export default function ManagementView() {
     <div className="flex-1 min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row h-screen overflow-hidden">
       
       {/* Mobile subtabs selector */}
-      <div className="md:hidden flex border-b border-slate-800 bg-slate-900 sticky top-0 z-30">
+      <div className="md:hidden flex border-b border-slate-800 bg-slate-900 sticky top-16 z-20">
         <button
-          onClick={() => setMobileSubTab('rooms')}
+          onClick={() => {
+            setMobileSubTab('rooms');
+            setSelectedRoomId(null);
+          }}
           className={`flex-1 py-3 text-center text-sm font-semibold border-b-2 cursor-pointer ${
             mobileSubTab === 'rooms' 
               ? 'border-indigo-500 text-indigo-400' 
@@ -650,7 +649,9 @@ export default function ManagementView() {
       </div>
 
       {/* RIGHT PANEL: Room status list & Room detailed controllers */}
-      <div className={`flex-1 flex flex-col h-full bg-slate-950 overflow-hidden ${
+      <div className={`fixed md:relative inset-0 md:inset-auto flex-1 flex flex-col h-full bg-slate-950 overflow-hidden z-30 md:z-0 transition-transform ${
+        selectedRoomId ? 'translate-x-0' : 'translate-x-full md:translate-x-0'
+      } ${
         mobileSubTab === 'rooms' ? 'flex' : 'hidden md:flex'
       }`}>
         {/* Room selection area */}
@@ -692,7 +693,7 @@ export default function ManagementView() {
         </div>
 
         {/* Dashboard Room Grid split view */}
-        <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
+        <div className={`flex-1 overflow-hidden flex flex-col lg:flex-row ${selectedRoomId ? 'md:flex hidden' : 'flex'}`}>
           
           {/* Main map Grid */}
           <div className="flex-1 overflow-y-auto p-4 lg:p-6">
@@ -723,13 +724,7 @@ export default function ManagementView() {
                   <motion.div
                     key={room.id}
                     layoutId={`room-card-${room.id}`}
-                    onClick={() => {
-                      setSelectedRoomId(room.id);
-                      // Show mobile detail overlay on mobile screens
-                      if (window.innerWidth < 768) {
-                        setShowMobileRoomDetail(true);
-                      }
-                    }}
+                    onClick={() => setSelectedRoomId(room.id)}
                     className={`rounded-2xl border p-4.5 cursor-pointer transition duration-200 relative overflow-hidden flex flex-col justify-between h-40 select-none ${bgStyle} ${pulseRing}`}
                   >
                     {/* VIP marker */}
@@ -822,7 +817,7 @@ export default function ManagementView() {
                     </p>
                   </div>
 
-                  <div className="text-right">
+                  <div className="flex items-center space-x-2">
                     <span className={`text-xs px-2.5 py-1 rounded-xl font-bold border font-mono uppercase tracking-wider ${
                       selectedRoom.status === 'available' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
                       selectedRoom.status === 'occupied' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
@@ -830,6 +825,13 @@ export default function ManagementView() {
                     }`}>
                       {selectedRoom.status === 'available' ? 'Trống' : selectedRoom.status === 'occupied' ? 'Đang hát' : 'Dọn dẹp'}
                     </span>
+                    <button
+                      onClick={() => setSelectedRoomId(null)}
+                      className="md:hidden p-2 hover:bg-slate-800 rounded-lg transition"
+                      title="Đóng"
+                    >
+                      <X size={18} className="text-slate-400" />
+                    </button>
                   </div>
                 </div>
 
@@ -1771,108 +1773,6 @@ export default function ManagementView() {
               </div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
-
-      {/* Mobile Room Detail Overlay */}
-      <AnimatePresence>
-        {showMobileRoomDetail && selectedRoom && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-40 md:hidden"
-            onClick={() => setShowMobileRoomDetail(false)}
-            onTouchStart={(e) => setMobileDetailStartY(e.touches[0].clientY)}
-            onTouchEnd={(e) => {
-              const endY = e.changedTouches[0].clientY;
-              // Swipe down more than 50px to close
-              if (endY - mobileDetailStartY > 50) {
-                setShowMobileRoomDetail(false);
-              }
-            }}
-          >
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="absolute bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 rounded-t-3xl max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Swipe indicator */}
-              <div className="flex justify-center pt-3 pb-2 sticky top-0 bg-slate-900/80 backdrop-blur border-b border-slate-800">
-                <div className="w-10 h-1 bg-slate-700 rounded-full"></div>
-              </div>
-
-              {/* Room Detail Content */}
-              <div className="p-5 space-y-5 pb-20">
-                {/* Close Button */}
-                <div className="flex justify-between items-center border-b border-slate-800 pb-4">
-                  <h3 className="text-lg font-bold text-slate-100">{selectedRoom.name}</h3>
-                  <button
-                    onClick={() => setShowMobileRoomDetail(false)}
-                    className="text-slate-400 hover:text-slate-200 p-1"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-
-                {/* Status Badge */}
-                <div className="text-center">
-                  <span className={`inline-block text-xs px-3 py-1 rounded-xl font-bold border font-mono uppercase tracking-wider ${
-                    selectedRoom.status === 'available' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                    selectedRoom.status === 'occupied' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
-                    'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                  }`}>
-                    {selectedRoom.status === 'available' ? 'Trống' : selectedRoom.status === 'occupied' ? 'Đang hát' : 'Dọn dẹp'}
-                  </span>
-                </div>
-
-                {/* Quick Actions */}
-                {selectedRoom.status === 'available' && (
-                  <button
-                    onClick={() => {
-                      handleStartRoom(selectedRoom.id);
-                      setShowMobileRoomDetail(false);
-                    }}
-                    className="w-full flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-xl font-semibold transition shadow-lg shadow-indigo-600/15 cursor-pointer"
-                  >
-                    <Play size={16} fill="white" />
-                    <span>BẮT ĐẦU TÍNH GIỜ</span>
-                  </button>
-                )}
-
-                {selectedRoom.status === 'cleaning' && (
-                  <button
-                    onClick={() => {
-                      completeCleaning(selectedRoom.id);
-                      setShowMobileRoomDetail(false);
-                    }}
-                    className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 py-3 px-4 rounded-xl font-bold transition duration-150 cursor-pointer"
-                  >
-                    Xác Nhận Đã Dọn Xong
-                  </button>
-                )}
-
-                {selectedRoom.status === 'occupied' && selectedRoom.activeSession && (
-                  <div className="space-y-3 text-xs text-slate-400 text-center">
-                    <p>Cuộn xuống để xem chi tiết hoá đơn ↓</p>
-                    <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-3 space-y-2">
-                      <div className="flex justify-between">
-                        <span>Tiếp viên:</span>
-                        <span className="text-slate-200 font-semibold">{selectedRoom.activeSession.hostesses.length}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Sản phẩm:</span>
-                        <span className="text-slate-200 font-semibold">{selectedRoom.activeSession.items.reduce((sum, i) => sum + i.quantity, 0)} cái</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
         )}
       </AnimatePresence>
 
