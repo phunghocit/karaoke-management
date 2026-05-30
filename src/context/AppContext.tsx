@@ -1318,18 +1318,23 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const roomCharge = Math.round((durationMinutes / 60) * room.hourlyPrice);
 
     // Hostesses charges with custom worked duration for each hostess rounded to minute ignoring seconds
+    // Set leftAt for all hostesses who haven't left yet
     let hostessCharge = 0;
     const computedHostesses = room.activeSession.hostesses.map(h => {
       const hiredClean = new Date(h.hiredAt);
       hiredClean.setSeconds(0, 0);
-      const exitClean = new Date(h.leftAt ? h.leftAt : checkoutTime);
+      const exitTime = h.leftAt ? h.leftAt : checkoutTime;
+      const exitClean = new Date(exitTime);
       exitClean.setSeconds(0, 0);
       
       const hDurationMinutes = Math.max(0, Math.floor((exitClean.getTime() - hiredClean.getTime()) / 60000));
       const cost = Math.round((hDurationMinutes / 60) * h.pricePerHour);
       
       hostessCharge += cost;
-      return h;
+      return {
+        ...h,
+        leftAt: exitTime  // Set leftAt for all hostesses
+      };
     });
 
     // Goods charges
@@ -1353,7 +1358,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       hostessCharge,
       goodsCharge,
       totalAmount,
-      hostesses: room.activeSession.hostesses,
+      hostesses: computedHostesses,  // Use the updated hostesses with leftAt set
       items: room.activeSession.items,
       createdAt: checkoutTime,
       createdBy: currentUser.displayName
@@ -1419,18 +1424,23 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const roomCharge = Math.round((durationMinutes / 60) * room.hourlyPrice);
 
     // Hostesses charges with custom worked duration for each hostess rounded to minute ignoring seconds
+    // Set leftAt for all hostesses who haven't left yet
     let hostessCharge = 0;
     const computedHostesses = room.activeSession.hostesses.map(h => {
       const hiredClean = new Date(h.hiredAt);
       hiredClean.setSeconds(0, 0);
-      const exitClean = new Date(h.leftAt ? h.leftAt : checkoutTime);
+      const exitTime = h.leftAt ? h.leftAt : checkoutTime;
+      const exitClean = new Date(exitTime);
       exitClean.setSeconds(0, 0);
       
       const hDurationMinutes = Math.max(0, Math.floor((exitClean.getTime() - hiredClean.getTime()) / 60000));
       const cost = Math.round((hDurationMinutes / 60) * h.pricePerHour);
       
       hostessCharge += cost;
-      return h;
+      return {
+        ...h,
+        leftAt: exitTime  // Set leftAt for all hostesses
+      };
     });
 
     // Goods charges
@@ -1454,7 +1464,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       hostessCharge,
       goodsCharge,
       totalAmount,
-      hostesses: room.activeSession.hostesses,
+      hostesses: computedHostesses,  // Use the updated hostesses with leftAt set
       items: room.activeSession.items,
       createdAt: checkoutTime,
       createdBy: currentUser.displayName,
