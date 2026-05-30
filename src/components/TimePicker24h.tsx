@@ -67,15 +67,15 @@ export const TimePicker24h: React.FC<TimePicker24hProps> = ({
       {label && (
         <span className="block text-[10px] text-zinc-500 uppercase font-bold mb-0.5">{label}</span>
       )}
-      <div className="flex items-center flex-wrap gap-1.5">
-        <div className="flex items-center space-x-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
+      <div className="flex flex-col gap-2 w-full">
+        <div className="flex items-center gap-2 bg-slate-950 p-2 rounded-lg border border-slate-800 w-full">
           {/* Hour Select */}
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-initial">
             <select
               disabled={disabled}
               value={safeHour}
               onChange={(e) => handleHourChange(e.target.value)}
-              className="appearance-none bg-slate-950 text-slate-100 rounded-md pl-2.5 pr-6 py-1 text-xs font-mono font-bold focus:outline-none text-center cursor-pointer min-w-[56px] border-none"
+              className="appearance-none bg-slate-950 text-slate-100 rounded-md pl-2.5 pr-6 py-2 text-sm sm:text-xs font-mono font-bold focus:outline-none text-center cursor-pointer w-full sm:min-w-[56px] border border-slate-800"
               style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
               title="Chọn giờ"
             >
@@ -89,15 +89,15 @@ export const TimePicker24h: React.FC<TimePicker24hProps> = ({
             <span className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500 text-[8px]">▼</span>
           </div>
 
-          <span className="text-slate-600 font-mono font-extrabold text-xs">:</span>
+          <span className="text-slate-600 font-mono font-extrabold text-xs hidden sm:inline">:</span>
 
           {/* Minute Select */}
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-initial">
             <select
               disabled={disabled}
               value={safeMinute}
               onChange={(e) => handleMinuteChange(e.target.value)}
-              className="appearance-none bg-slate-950 text-slate-100 rounded-md pl-2.5 pr-6 py-1 text-xs font-mono font-bold focus:outline-none text-center cursor-pointer min-w-[56px] border-none"
+              className="appearance-none bg-slate-950 text-slate-100 rounded-md pl-2.5 pr-6 py-2 text-sm sm:text-xs font-mono font-bold focus:outline-none text-center cursor-pointer w-full sm:min-w-[56px] border border-slate-800"
               style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
               title="Chọn phút"
             >
@@ -113,12 +113,12 @@ export const TimePicker24h: React.FC<TimePicker24hProps> = ({
         </div>
 
         {/* Quick adjustment badges */}
-        <div className="flex items-center space-x-1 flex-wrap">
+        <div className="grid grid-cols-4 gap-1.5 sm:flex sm:items-center sm:space-x-1 sm:flex-wrap">
           <button
             type="button"
             disabled={disabled}
             onClick={() => adjustMinutes(-15)}
-            className="px-1.5 py-1 bg-rose-955/30 hover:bg-rose-950/60 border border-rose-900/30 hover:border-rose-500/20 text-rose-400 rounded text-[9.5px] font-bold font-mono transition cursor-pointer leading-none"
+            className="px-2 py-2 sm:px-1.5 sm:py-1 bg-rose-955/30 hover:bg-rose-950/60 border border-rose-900/30 hover:border-rose-500/20 text-rose-400 rounded text-[11px] sm:text-[9.5px] font-bold font-mono transition cursor-pointer leading-none"
             title="Lùi 15 phút"
           >
             -15p
@@ -127,7 +127,7 @@ export const TimePicker24h: React.FC<TimePicker24hProps> = ({
             type="button"
             disabled={disabled}
             onClick={() => adjustMinutes(-5)}
-            className="px-1.5 py-1 bg-rose-955/20 hover:bg-rose-950/40 border border-rose-900/20 hover:border-rose-500/10 text-rose-400 rounded text-[10px] font-medium font-mono transition cursor-pointer leading-none"
+            className="px-2 py-2 sm:px-1.5 sm:py-1 bg-rose-955/20 hover:bg-rose-950/40 border border-rose-900/20 hover:border-rose-500/10 text-rose-400 rounded text-[11px] sm:text-[10px] font-medium font-mono transition cursor-pointer leading-none"
             title="Lùi 5 phút"
           >
             -5p
@@ -136,7 +136,7 @@ export const TimePicker24h: React.FC<TimePicker24hProps> = ({
             type="button"
             disabled={disabled}
             onClick={() => adjustMinutes(5)}
-            className="px-1.5 py-1 bg-emerald-955/20 hover:bg-emerald-950/40 border border-emerald-900/20 hover:border-emerald-500/10 text-emerald-400 rounded text-[10px] font-medium font-mono transition cursor-pointer leading-none"
+            className="px-2 py-2 sm:px-1.5 sm:py-1 bg-emerald-955/20 hover:bg-emerald-950/40 border border-emerald-900/20 hover:border-emerald-500/10 text-emerald-400 rounded text-[11px] sm:text-[10px] font-medium font-mono transition cursor-pointer leading-none"
             title="Tới 5 phút"
           >
             +5p
@@ -145,7 +145,7 @@ export const TimePicker24h: React.FC<TimePicker24hProps> = ({
             type="button"
             disabled={disabled}
             onClick={() => adjustMinutes(15)}
-            className="px-1.5 py-1 bg-emerald-955/30 hover:bg-emerald-950/60 border border-emerald-900/30 hover:border-emerald-500/20 text-emerald-400 rounded text-[9.5px] font-bold font-mono transition cursor-pointer leading-none"
+            className="px-2 py-2 sm:px-1.5 sm:py-1 bg-emerald-955/30 hover:bg-emerald-950/60 border border-emerald-900/30 hover:border-emerald-500/20 text-emerald-400 rounded text-[11px] sm:text-[9.5px] font-bold font-mono transition cursor-pointer leading-none"
             title="Tới 15 phút"
           >
             +15p
@@ -155,7 +155,7 @@ export const TimePicker24h: React.FC<TimePicker24hProps> = ({
               type="button"
               disabled={disabled}
               onClick={onResetToNow}
-              className="px-2 py-1 bg-indigo-950/40 hover:bg-indigo-950/60 border border-indigo-900/30 hover:border-indigo-500/20 text-indigo-400 rounded-lg text-[9.5px] font-bold transition cursor-pointer flex items-center space-x-1 leading-none"
+              className="px-2 py-2 sm:px-2 sm:py-1 bg-indigo-950/40 hover:bg-indigo-950/60 border border-indigo-900/30 hover:border-indigo-500/20 text-indigo-400 rounded-lg text-[11px] sm:text-[9.5px] font-bold transition cursor-pointer flex items-center space-x-1 leading-none justify-center"
               title="Đặt lại giờ hiện tại"
             >
               <Clock size={10} />
@@ -167,7 +167,7 @@ export const TimePicker24h: React.FC<TimePicker24hProps> = ({
               type="button"
               disabled={disabled}
               onClick={() => onChange('')}
-              className="px-1.5 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 rounded text-[9.5px] font-bold transition cursor-pointer leading-none"
+              className="px-2 py-2 sm:px-1.5 sm:py-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 rounded text-[11px] sm:text-[9.5px] font-bold transition cursor-pointer leading-none"
               title="Xóa giờ để rỗng (Đang hát)"
             >
               Để rỗng

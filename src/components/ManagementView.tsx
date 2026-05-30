@@ -345,7 +345,7 @@ export default function ManagementView() {
   };
 
   const handleCancelRoom = (roomId: string) => {
-    if (currentUser.role === 'staff') {
+    if (!currentUser || currentUser.role === 'staff') {
       alert('Tài khoản nhân viên không có quyền hủy phòng!');
       return;
     }
@@ -586,7 +586,7 @@ export default function ManagementView() {
                     return (
                       <div className={`grid ${hasReopenButton ? 'grid-cols-2' : 'grid-cols-1'} gap-2 mt-2`} onClick={(e) => e.stopPropagation()}>
                         {hasReopenButton && (
-                          currentUser.role === 'manager' ? (
+                          currentUser && currentUser.role === 'manager' ? (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -608,7 +608,7 @@ export default function ManagementView() {
                           )
                         )}
 
-                        {currentUser.role === 'manager' ? (
+                        {currentUser && currentUser.role === 'manager' ? (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -790,7 +790,7 @@ export default function ManagementView() {
           </div>
 
           {/* Main selected Room Manager sidebar controller */}
-          <div className={`w-full lg:w-[480px] xl:w-[540px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/35 overflow-y-auto h-full lg:max-h-full flex flex-col ${
+          <div className={`w-full lg:w-[480px] xl:w-[540px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/35 overflow-y-auto max-h-[calc(100vh-240px)] lg:max-h-full flex flex-col ${
             selectedRoom ? 'flex' : 'hidden lg:flex'
           }`}>
             {selectedRoom ? (
@@ -897,7 +897,7 @@ export default function ManagementView() {
                       </div>
 
                       {/* Unified Time Controllers (Giờ Vào & Giờ Ra cùng 1 chỗ, hỗ trợ cả Ngày & Giờ) */}
-                      <div className="pt-3 border-t border-slate-900/60 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div className="pt-3 border-t border-slate-900/60 grid grid-cols-1 md:grid-cols-2 gap-3.5">
                         {/* Cột 1: Sửa giờ vào */}
                         <div className="space-y-1.5 border border-slate-800/30 p-2.5 rounded-xl bg-slate-950/10">
                           <span className="block text-slate-400 text-[10.5px] font-semibold uppercase tracking-wider mb-1">1. Giờ vào phòng</span>
@@ -1159,7 +1159,7 @@ export default function ManagementView() {
                                 {/* Row 3 (Collapsible Adjusters): Time pickers adjusters */}
                                 {editingHostessTimeId === h.id && (
                                   <div className="pt-2 border-t border-slate-900/60 space-y-2 pb-1">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                       {/* Sửa giờ vào tiếp viên */}
                                       <div className="space-y-1.5 bg-slate-950/40 p-2 rounded-lg border border-slate-900/40">
                                         <span className="block text-slate-400 text-[9.5px] font-bold uppercase tracking-wider mb-1">Giờ vào tiếp viên:</span>
@@ -1262,12 +1262,12 @@ export default function ManagementView() {
 
                       {/* Interactive Add list with search category toggle */}
                       <div className="bg-slate-950/45 border border-slate-800 p-3.5 rounded-2xl flex flex-col space-y-2.5">
-                        <div className="flex space-x-1 pb-1">
+                        <div className="flex gap-1 pb-1 overflow-x-auto">
                           {(['all', 'drink', 'food', 'other'] as const).map(cat => (
                             <button
                               key={cat}
                               onClick={() => setGoodsCategoryFilter(cat)}
-                              className={`text-[10.5px] px-2 py-1 rounded-md font-medium transition cursor-pointer ${
+                              className={`text-[10.5px] px-2 py-1 rounded-md font-medium transition cursor-pointer shrink-0 whitespace-nowrap ${
                                 goodsCategoryFilter === cat 
                                   ? 'bg-indigo-600 font-bold text-white' 
                                   : 'bg-slate-900 border border-slate-800 text-slate-500 hover:text-slate-300'
@@ -1471,7 +1471,7 @@ export default function ManagementView() {
                           </button>
 
                           {/* Cancellation Button */}
-                          {currentUser.role === 'manager' ? (
+                          {currentUser && currentUser.role === 'manager' ? (
                             <button
                               onClick={() => setIsCancellingRoom(true)}
                               className="w-full flex items-center justify-center space-x-1.5 bg-slate-900/60 hover:bg-rose-950/20 text-rose-400 hover:text-rose-300 border border-rose-500/20 hover:border-rose-500/40 py-2 rounded-xl transition cursor-pointer font-bold text-xs"
