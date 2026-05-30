@@ -417,10 +417,7 @@ export default function ManagementView() {
       {/* Mobile subtabs selector */}
       <div className="md:hidden flex border-b border-slate-800 bg-slate-900 sticky top-16 z-20">
         <button
-          onClick={() => {
-            setMobileSubTab('rooms');
-            setSelectedRoomId(null);
-          }}
+          onClick={() => setMobileSubTab('rooms')}
           className={`flex-1 py-3 text-center text-sm font-semibold border-b-2 cursor-pointer ${
             mobileSubTab === 'rooms' 
               ? 'border-indigo-500 text-indigo-400' 
@@ -649,9 +646,7 @@ export default function ManagementView() {
       </div>
 
       {/* RIGHT PANEL: Room status list & Room detailed controllers */}
-      <div className={`fixed md:relative inset-0 md:inset-auto flex-1 flex flex-col h-full bg-slate-950 overflow-hidden z-30 md:z-0 transition-transform ${
-        selectedRoomId ? 'translate-x-0' : 'translate-x-full md:translate-x-0'
-      } ${
+      <div className={`flex-1 flex flex-col h-full bg-slate-950 overflow-hidden ${
         mobileSubTab === 'rooms' ? 'flex' : 'hidden md:flex'
       }`}>
         {/* Room selection area */}
@@ -693,7 +688,7 @@ export default function ManagementView() {
         </div>
 
         {/* Dashboard Room Grid split view */}
-        <div className={`flex-1 overflow-hidden flex flex-col lg:flex-row ${selectedRoomId ? 'md:flex hidden' : 'flex'}`}>
+        <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
           
           {/* Main map Grid */}
           <div className="flex-1 overflow-y-auto p-4 lg:p-6">
@@ -817,7 +812,7 @@ export default function ManagementView() {
                     </p>
                   </div>
 
-                  <div className="flex items-center space-x-2">
+                  <div className="text-right">
                     <span className={`text-xs px-2.5 py-1 rounded-xl font-bold border font-mono uppercase tracking-wider ${
                       selectedRoom.status === 'available' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
                       selectedRoom.status === 'occupied' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
@@ -825,13 +820,6 @@ export default function ManagementView() {
                     }`}>
                       {selectedRoom.status === 'available' ? 'Trống' : selectedRoom.status === 'occupied' ? 'Đang hát' : 'Dọn dẹp'}
                     </span>
-                    <button
-                      onClick={() => setSelectedRoomId(null)}
-                      className="md:hidden p-2 hover:bg-slate-800 rounded-lg transition"
-                      title="Đóng"
-                    >
-                      <X size={18} className="text-slate-400" />
-                    </button>
                   </div>
                 </div>
 
