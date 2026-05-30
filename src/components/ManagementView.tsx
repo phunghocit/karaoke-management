@@ -1302,7 +1302,7 @@ export default function ManagementView() {
                       </div>
 
                       {/* Selected Items details inside the Room */}
-                      <div className="space-y-1.5 max-h-36 overflow-y-auto w-full">
+                      <div className="space-y-1.5 max-h-64 overflow-y-auto w-full">
                         {selectedRoom.activeSession.items.length === 0 ? (
                           <div className="text-center py-6 text-slate-600 text-xs italic bg-slate-900/10 border border-slate-800/20 rounded-xl leading-relaxed">
                             Chưa gọi đồ có sẵn. Sử dụng bảng trên để thêm nhanh đồ uống, trái cây.
