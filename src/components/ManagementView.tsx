@@ -82,6 +82,7 @@ export default function ManagementView() {
     currentUser,
     startRoom,
     addGoodsToRoom,
+    setGoodsQuantityInRoom,
     addHostessToRoom,
     removeHostessFromRoom,
     resumeHostessSession,
@@ -192,6 +193,10 @@ export default function ManagementView() {
   const [customCheckoutTimeVal, setCustomCheckoutTimeVal] = useState('');
   const [customCheckoutDateVal, setCustomCheckoutDateVal] = useState('');
   const [editingHostessTimeId, setEditingHostessTimeId] = useState<string | null>(null);
+
+  // Goods quantity editing state
+  const [editingGoodsQtyId, setEditingGoodsQtyId] = useState<string | null>(null);
+  const [editingGoodsQtyValue, setEditingGoodsQtyValue] = useState<string>('');
 
   // Real-time tick to update estimated checkout values automatically
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -1320,9 +1325,45 @@ export default function ManagementView() {
                                   >
                                     <Minus size={11} />
                                   </button>
-                                  <span className="font-mono font-bold text-slate-200 px-1 text-center min-w-[16px]">
-                                    {item.quantity}
-                                  </span>
+                                  {editingGoodsQtyId === item.id ? (
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      value={editingGoodsQtyValue}
+                                      onChange={(e) => setEditingGoodsQtyValue(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                          const newQty = parseInt(editingGoodsQtyValue, 10);
+                                          if (!isNaN(newQty) && newQty > 0) {
+                                            setGoodsQuantityInRoom(selectedRoom.id, item.id, newQty);
+                                          }
+                                          setEditingGoodsQtyId(null);
+                                          setEditingGoodsQtyValue('');
+                                        }
+                                      }}
+                                      onBlur={() => {
+                                        const newQty = parseInt(editingGoodsQtyValue, 10);
+                                        if (!isNaN(newQty) && newQty > 0) {
+                                          setGoodsQuantityInRoom(selectedRoom.id, item.id, newQty);
+                                        }
+                                        setEditingGoodsQtyId(null);
+                                        setEditingGoodsQtyValue('');
+                                      }}
+                                      className="font-mono font-bold text-slate-200 px-1 text-center min-w-[35px] bg-slate-900 border border-indigo-500 rounded outline-none"
+                                      autoFocus
+                                    />
+                                  ) : (
+                                    <span 
+                                      className="font-mono font-bold text-slate-200 px-1 text-center min-w-[16px] cursor-pointer hover:text-indigo-400 hover:bg-slate-900/50 rounded px-2 py-0.5 transition"
+                                      onClick={() => {
+                                        setEditingGoodsQtyId(item.id);
+                                        setEditingGoodsQtyValue(item.quantity.toString());
+                                      }}
+                                      title="Click to edit quantity"
+                                    >
+                                      {item.quantity}
+                                    </span>
+                                  )}
                                   <button
                                     onClick={() => addGoodsToRoom(selectedRoom.id, item.id, 1)}
                                     className="text-slate-400 hover:text-white p-0.5"

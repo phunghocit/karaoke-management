@@ -394,8 +394,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       if (!fbUser) {
         try {
           await signInAnonymously(auth);
-        } catch (err) {
-          console.error("Failed to sign in anonymously", err);
+        } catch (err: any) {
+          // Silently fail if anonymous auth is disabled or not allowed
+          if (err?.code === 'auth/admin-restricted-operation' || err?.code === 'auth/operation-not-allowed') {
+            console.warn("Anonymous authentication is not enabled. User will remain unauthenticated.");
+          } else {
+            console.error("Failed to sign in anonymously", err);
+          }
         }
         return;
       }
@@ -959,6 +964,54 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const updatedLogs = addLogEntry(
       'Gọi hàng hóa',
       `${roomName} ${qtyText} ${itemInfo.name} (${itemInfo.price.toLocaleString()}đ/${itemInfo.unit})`
+    );
+    syncAndSave(newRooms, hostesses, goods, orders, updatedLogs);
+  };
+
+  const setGoodsQuantityInRoom = (roomId: string, goodsId: string, newQuantity: number) => {
+    const itemInfo = goods.find(g => g.id === goodsId);
+    if (!itemInfo) return;
+
+    const newRooms = rooms.map(room => {
+      if (room.id === roomId && room.activeSession) {
+        const existingItemIndex = room.activeSession.items.findIndex(i => i.id === goodsId);
+        let updatedItems = [...room.activeSession.items];
+
+        if (existingItemIndex > -1) {
+          if (newQuantity <= 0) {
+            updatedItems.splice(existingItemIndex, 1);
+          } else {
+            updatedItems[existingItemIndex] = {
+              ...updatedItems[existingItemIndex],
+              quantity: newQuantity
+            };
+          }
+        } else if (newQuantity > 0) {
+          updatedItems.push({
+            id: goodsId,
+            name: itemInfo.name,
+            price: itemInfo.price,
+            quantity: newQuantity,
+            unit: itemInfo.unit,
+            orderedAt: new Date().toISOString()
+          });
+        }
+
+        return {
+          ...room,
+          activeSession: {
+            ...room.activeSession,
+            items: updatedItems
+          }
+        };
+      }
+      return room;
+    });
+
+    const roomName = rooms.find(r => r.id === roomId)?.name || roomId;
+    const updatedLogs = addLogEntry(
+      'Sửa số lượng hàng hóa',
+      `${roomName} - ${itemInfo.name}: ${newQuantity} ${itemInfo.unit}`
     );
     syncAndSave(newRooms, hostesses, goods, orders, updatedLogs);
   };
@@ -1778,6 +1831,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         updateShopSettings,
         startRoom,
         addGoodsToRoom,
+        setGoodsQuantityInRoom,
         addHostessToRoom,
         removeHostessFromRoom,
         resumeHostessSession,
