@@ -82,7 +82,6 @@ export default function ManagementView() {
     currentUser,
     startRoom,
     addGoodsToRoom,
-    setGoodsQuantityInRoom,
     addHostessToRoom,
     removeHostessFromRoom,
     resumeHostessSession,
@@ -193,10 +192,6 @@ export default function ManagementView() {
   const [customCheckoutTimeVal, setCustomCheckoutTimeVal] = useState('');
   const [customCheckoutDateVal, setCustomCheckoutDateVal] = useState('');
   const [editingHostessTimeId, setEditingHostessTimeId] = useState<string | null>(null);
-
-  // Goods quantity editing state
-  const [editingGoodsQtyId, setEditingGoodsQtyId] = useState<string | null>(null);
-  const [editingGoodsQtyValue, setEditingGoodsQtyValue] = useState<string>('');
 
   // Real-time tick to update estimated checkout values automatically
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -412,26 +407,28 @@ export default function ManagementView() {
   const cleaningCount = rooms.filter(r => r.status === 'cleaning').length;
 
   return (
-    <div className="flex-1 min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row h-screen overflow-hidden">
+    <div className="flex-1 bg-slate-950 text-slate-100 flex flex-col md:flex-row h-full overflow-hidden">
       
       {/* Mobile subtabs selector */}
-      <div className="md:hidden flex border-b border-slate-800 bg-slate-900 sticky top-16 z-20">
+      <div className="md:hidden flex justify-center border-b border-slate-800 bg-slate-900/90 backdrop-blur-sm sticky top-0 z-20 py-2.5 px-4 gap-3">
         <button
+          type="button"
           onClick={() => setMobileSubTab('rooms')}
-          className={`flex-1 py-3 text-center text-sm font-semibold border-b-2 cursor-pointer ${
+          className={`px-4 py-2 text-xs font-semibold rounded-xl border transition-all duration-200 cursor-pointer ${
             mobileSubTab === 'rooms' 
-              ? 'border-indigo-500 text-indigo-400' 
-              : 'border-transparent text-slate-400'
+              ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/10' 
+              : 'border-slate-800 text-slate-400 bg-slate-950/65 hover:bg-slate-850'
           }`}
         >
           Sơ đồ Phòng ({rooms.length})
         </button>
         <button
+          type="button"
           onClick={() => setMobileSubTab('invoices')}
-          className={`flex-1 py-3 text-center text-sm font-semibold border-b-2 cursor-pointer ${
+          className={`px-4 py-2 text-xs font-semibold rounded-xl border transition-all duration-200 cursor-pointer ${
             mobileSubTab === 'invoices' 
-              ? 'border-indigo-500 text-indigo-400' 
-              : 'border-transparent text-slate-400'
+              ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/10' 
+              : 'border-slate-800 text-slate-400 bg-slate-950/65 hover:bg-slate-850'
           }`}
         >
           Đơn đã chốt ({orders.length})
@@ -650,7 +647,9 @@ export default function ManagementView() {
         mobileSubTab === 'rooms' ? 'flex' : 'hidden md:flex'
       }`}>
         {/* Room selection area */}
-        <div className="p-4 border-b border-slate-800 bg-indigo-950/5/30 flex flex-col md:flex-row md:items-center justify-between space-y-3 md:space-y-0 shrink-0">
+        <div className={`p-4 border-b border-slate-800 bg-indigo-950/5/30 flex flex-col md:flex-row md:items-center justify-between space-y-3 md:space-y-0 shrink-0 ${
+          selectedRoom ? 'hidden lg:flex' : 'flex'
+        }`}>
           <div>
             <h2 className="text-base font-bold text-slate-100 flex items-center space-x-2">
               <span className="w-1.5 h-3 bg-indigo-500 rounded-xs"></span>
@@ -691,7 +690,7 @@ export default function ManagementView() {
         <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
           
           {/* Main map Grid */}
-          <div className="flex-1 overflow-y-auto p-4 lg:p-6">
+          <div className={`flex-1 overflow-y-auto p-4 lg:p-6 ${selectedRoom ? 'hidden lg:block' : 'block'}`}>
             <div className="grid grid-cols-2 gap-5">
               {rooms.map(room => {
                 const isSelected = selectedRoomId === room.id;
@@ -791,13 +790,23 @@ export default function ManagementView() {
           </div>
 
           {/* Main selected Room Manager sidebar controller */}
-          <div className="w-full lg:w-[480px] xl:w-[540px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/35 overflow-y-auto max-h-[70vh] lg:max-h-full flex flex-col">
+          <div className={`w-full lg:w-[480px] xl:w-[540px] border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/35 overflow-y-auto h-full lg:max-h-full flex flex-col ${
+            selectedRoom ? 'flex' : 'hidden lg:flex'
+          }`}>
             {selectedRoom ? (
               <div className="flex flex-col flex-1 p-5 space-y-5">
                 {/* Header state inside controller */}
                 <div className="flex items-start justify-between border-b border-slate-800 pb-4">
                   <div>
                     <div className="flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRoomId(null)}
+                        className="lg:hidden p-1 bg-slate-800/80 hover:bg-slate-700 text-slate-350 hover:text-slate-100 rounded-lg transition mr-1 flex items-center justify-center shrink-0 cursor-pointer"
+                        title="Quay lại sơ đồ phòng"
+                      >
+                        <X size={16} />
+                      </button>
                       <h2 className="text-xl font-extrabold text-slate-100">{selectedRoom.name}</h2>
                       <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase border font-mono tracking-wider ${
                         selectedRoom.type === 'vip' 
@@ -1302,7 +1311,7 @@ export default function ManagementView() {
                       </div>
 
                       {/* Selected Items details inside the Room */}
-                      <div className="space-y-1.5 max-h-64 overflow-y-auto w-full">
+                      <div className="space-y-1.5 max-h-36 overflow-y-auto w-full">
                         {selectedRoom.activeSession.items.length === 0 ? (
                           <div className="text-center py-6 text-slate-600 text-xs italic bg-slate-900/10 border border-slate-800/20 rounded-xl leading-relaxed">
                             Chưa gọi đồ có sẵn. Sử dụng bảng trên để thêm nhanh đồ uống, trái cây.
@@ -1325,45 +1334,9 @@ export default function ManagementView() {
                                   >
                                     <Minus size={11} />
                                   </button>
-                                  {editingGoodsQtyId === item.id ? (
-                                    <input
-                                      type="number"
-                                      min="1"
-                                      value={editingGoodsQtyValue}
-                                      onChange={(e) => setEditingGoodsQtyValue(e.target.value)}
-                                      onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                          const newQty = parseInt(editingGoodsQtyValue, 10);
-                                          if (!isNaN(newQty) && newQty > 0) {
-                                            setGoodsQuantityInRoom(selectedRoom.id, item.id, newQty);
-                                          }
-                                          setEditingGoodsQtyId(null);
-                                          setEditingGoodsQtyValue('');
-                                        }
-                                      }}
-                                      onBlur={() => {
-                                        const newQty = parseInt(editingGoodsQtyValue, 10);
-                                        if (!isNaN(newQty) && newQty > 0) {
-                                          setGoodsQuantityInRoom(selectedRoom.id, item.id, newQty);
-                                        }
-                                        setEditingGoodsQtyId(null);
-                                        setEditingGoodsQtyValue('');
-                                      }}
-                                      className="font-mono font-bold text-slate-200 px-1 text-center min-w-[35px] bg-slate-900 border border-indigo-500 rounded outline-none"
-                                      autoFocus
-                                    />
-                                  ) : (
-                                    <span 
-                                      className="font-mono font-bold text-slate-200 px-1 text-center min-w-[16px] cursor-pointer hover:text-indigo-400 hover:bg-slate-900/50 rounded px-2 py-0.5 transition"
-                                      onClick={() => {
-                                        setEditingGoodsQtyId(item.id);
-                                        setEditingGoodsQtyValue(item.quantity.toString());
-                                      }}
-                                      title="Click to edit quantity"
-                                    >
-                                      {item.quantity}
-                                    </span>
-                                  )}
+                                  <span className="font-mono font-bold text-slate-200 px-1 text-center min-w-[16px]">
+                                    {item.quantity}
+                                  </span>
                                   <button
                                     onClick={() => addGoodsToRoom(selectedRoom.id, item.id, 1)}
                                     className="text-slate-400 hover:text-white p-0.5"
